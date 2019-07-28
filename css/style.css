@@ -1,8 +1,9 @@
-*, ::before, *::after {
+*, *::before, *::after {
     box-sizing: border-box;
 }
 
 body{ 
+    font-family: 'Lato';
     height: 100vh;
     background: #eeeeff;
     margin: 0;
@@ -20,14 +21,17 @@ section.board {
 }
 
 .squares {
-    font-family: 'Lato';
-    padding: 20% 0;
+    padding: 30% 0;
     text-align: center;
     font-size: 55px;
     background: #eeeeff;
     color: black;    
     border: solid 1px black;
     border-radius: 5px;
+}
+
+.hoverable:hover{
+    box-shadow: 3px 4px 5px 5px lightgray;
 }
 
 button {

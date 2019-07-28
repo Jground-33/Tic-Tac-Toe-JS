@@ -1,29 +1,31 @@
 // Tic Tac Toe 
 /*----- constants -----*/ 
 const PLAYERS = {
+	'0': '',
     '1': 'X',
     '-1': 'O'
-}
+};
 /*----- app's state (variables) -----*/ 
 let board, turn, winner
-
-/*----- cached element references -----*/ 
-const sqElems = document.querySelector('section');
+/*----- cached (row, rowIdx) references -----*/ 
+const message = document.getElementById('msg');
+const gameBoard = document.querySelector('section.board');
 const button = document.querySelector('button');
 /*----- event listeners -----*/ 
-sqElems.addEventListener('click', handleSqClick);
-button.addEventListener('click', function() {
-    init();
-})
+gameBoard.addEventListener('click', handleSqClick);
+button.addEventListener('click', () => init()); 
 /*----- event handlers -----*/ 
 function handleSqClick(event) {
-    console.log(event);
-    if(event.target.className === "squares") {
-        event.target.textContent = PLAYERS[turn] // 
-        turn *= -1;
-    }
+	let colIdx = event.target.id[3]; 
+	let rowIdx = event.target.id[1];
+	// Checks if element is a square & if board space is available then updats board and switches turn
+	if (colIdx && board[rowIdx][colIdx] === 0){
+	board[rowIdx][colIdx] = turn; 
+	turn *= -1;
+	}
+	winner = getWinner(rowIdx, colIdx);
+	render();
 }
-
 /*----- functions -----*/
 init();
 function init() {
@@ -32,55 +34,37 @@ function init() {
         [0, 0, 0],
         [0, 0, 0]
     ]
-    turn = Math.random() > 0.5 ? 1 : -1 // <--randomly picks who goes first
-    console.log(`${turn}'s turn`); 
+    turn = Math.random() > 0.5 ? 1 : -1; // <--randomly picks who goes first
     winner = null; 
     render();
 }
 
 function render() {
-    // board.forEach(function(rowArr, rowIndex1) {
-        
-    // })
-    getWinner();
+	// render board according to board Array
+	board.forEach(function(rowArr, rowIndex) { 
+		rowArr.forEach(function(value, colIndex) {
+			let div = document.getElementById(`r${rowIndex}c${colIndex}`);
+			div.textContent = PLAYERS[board[rowIndex][colIndex]];
+			div.className = value === 0 ? 'squares hoverable' : 'squares';
+		});
+	});
+	if(winner) alert(`${PLAYERS[winner]} is the winner`); // alerts who has was.
+	message.textContent = `${PLAYERS[turn]}'s turn`; // render's current players turn.
 }
 
-function getWinner() {
-
+function getWinner(rowIdx, colIdx) {
+	let result;
+	// checks rows
+	if(Math.abs(board[rowIdx].reduce((x,y) => x + y)) === 3) result = turn * -1;
+	// checks cols and diags RF
+	let colSum = 0;
+	let topDiagSum = 0;
+	let bottomDiagSum = 0;
+	for(let i = 0, j = 2; i < 3; i++, j--) {
+		colSum += board[i][colIdx];
+		topDiagSum += board[i][i];
+		bottomDiagSum += board[j][i];
+	}
+	if(Math.abs(colSum) === 3 || Math.abs(bottomDiagSum) === 3 || Math.abs(topDiagSum) === 3) result = turn * -1;
+	return result;
 }
-
-
-
-/* 
-- 1. make board grid 
-- 2. use Math.random to pick which player starts 
-- 3. X's and O's --> <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-- 4. switch turn in event handler function 
- 5. make sure 
-    - once square is full players should not be able to click. !!!!!!
-    - render shadow box on hover and if square is empty 
- 6. create button that initialises new game. 
-    - button must reset board and clear content of the rendered board
- 7. 
-
-
-
-
- === extras === 
-  1. display who's turn it is 
-        -decide where to update
-  2. provide game win logic.
-  3. provide cat's game logic === tie
-  4. 
-  5. add styling 
-
-*/
-
-
-
-
-
-
-/* commit message 
-    "added random player start, button for game reset, and on clicking square X or O is rendered to board"
-*/
